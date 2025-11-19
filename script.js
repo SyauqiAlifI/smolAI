@@ -89,8 +89,11 @@ function displayMessage(role, content, reasoning = null) {
 
     if (reasoning) {
         const reasoningDiv = document.createElement('div');
+        const reasoningContent = JSON.stringify(reasoning, null, 2); // JSON Output: [{type: "", text: "", format: unknown, index: 0}] (JSON inside an array)
         reasoningDiv.classList.add('reasoning');
-        reasoningDiv.textContent = `Reasoning: ${JSON.stringify(reasoning, null, 2)}`;
+        // reasoningDiv.textContent = `Reasoning: ${JSON.stringify(reasoning, null, 2)}`;
+        // Only show the text fields from reasoning
+        reasoningDiv.textContent = `Reasoning: ${reasoning.map(r => `${r.text}`).join(' | ')}`;
         messageDiv.appendChild(reasoningDiv);
     }
 
