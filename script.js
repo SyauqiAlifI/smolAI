@@ -42,11 +42,14 @@ async function fetchResponse() {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                "model": "openai/gpt-oss-20b:free",
+                "model": "nvidia/nemotron-nano-12b-v2-vl:free",
                 "messages": messages,
                 "reasoning": {"enabled": true}
             })
         });
+
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
 
         if (!response.ok) {
             if (response.status === 429) {
@@ -89,11 +92,9 @@ function displayMessage(role, content, reasoning = null) {
 
     if (reasoning) {
         const reasoningDiv = document.createElement('div');
-        const reasoningContent = JSON.stringify(reasoning, null, 2); // JSON Output: [{type: "", text: "", format: unknown, index: 0}] (JSON inside an array)
         reasoningDiv.classList.add('reasoning');
-        // reasoningDiv.textContent = `Reasoning: ${JSON.stringify(reasoning, null, 2)}`;
-        // Only show the text fields from reasoning
         reasoningDiv.textContent = `Reasoning: ${reasoning.map(r => `${r.text}`).join(' | ')}`;
+        // reasoningDiv.textContent = `Reasoning: ${JSON.stringify(reasoning)}`;
         messageDiv.appendChild(reasoningDiv);
     }
 
