@@ -19,5 +19,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["openrouter.ts"]
+  "include": ["openrouter.ts", "env.d.ts"]
 }
