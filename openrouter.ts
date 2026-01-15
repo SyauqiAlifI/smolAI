@@ -12,10 +12,22 @@ interface Message {
 
 const messages: Message[] = [];
 
-function appendMessage(role: "user" | "assistant", content: string) {
+function appendMessage(role: "user" | "assistant", content: string, reasoning?: string) {
   const msgDiv = document.createElement("div");
-  msgDiv.className = `p-3 rounded-lg max-w-[80%] ${role === "user" ? "bg-dark-accent text-slate-900 ml-auto" : "bg-slate-700 text-slate-200 mr-auto"}`;
-  msgDiv.textContent = content;
+  msgDiv.className = `p-4 rounded-2xl w-fit max-w-[85%] shadow-sm ${role === "user" ? "bg-dark-accent text-slate-900 ml-auto rounded-tr-none" : "bg-slate-700/50 text-slate-200 mr-auto rounded-tl-none border border-slate-600/50"}`;
+
+  if (role === "assistant" && reasoning) {
+    const reasoningDiv = document.createElement("div");
+    reasoningDiv.className = "mb-3 pb-3 border-b border-slate-600/50 text-sm italic text-slate-400";
+    reasoningDiv.innerHTML = `<span class="block font-semibold not-italic text-xs uppercase tracking-wider mb-1 text-slate-500">Thought Process</span>${reasoning}`;
+    msgDiv.appendChild(reasoningDiv);
+  }
+
+  const contentDiv = document.createElement("div");
+  contentDiv.className = "leading-relaxed";
+  contentDiv.textContent = content;
+  msgDiv.appendChild(contentDiv);
+
   chatMessages.appendChild(msgDiv);
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }
@@ -38,13 +50,15 @@ async function sendMessage() {
       body: JSON.stringify({
         model: AI_MODEL,
         messages: messages,
-        reasoning: { "enabled": true },
+        include_reasoning: true,
       }),
     });
 
     const data = await response.json();
     const assistantMessage = data.choices[0].message.content;
-    appendMessage("assistant", assistantMessage);
+    const reasoning = data.choices[0].message.reasoning;
+
+    appendMessage("assistant", assistantMessage, reasoning);
     messages.push({ role: "assistant", content: assistantMessage });
   } catch (error) {
     console.error("Error sending message:", error);
